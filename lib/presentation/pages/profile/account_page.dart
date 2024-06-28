@@ -1,11 +1,8 @@
-import 'dart:io';
-import 'dart:math';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:youtube_clone/main.dart';
-import 'package:youtube_clone/presentation/pages/widgets/profile_widget.dart';
+import 'package:youtube_clone/presentation/pages/widgets/avatar.dart';
+
+import '../../../const.dart';
 
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
@@ -17,18 +14,12 @@ class AccountPage extends StatefulWidget {
 class _AccountPageState extends State<AccountPage> {
   final _usernameController = TextEditingController();
   final _websiteController = TextEditingController();
-
-  @override
-  void dispose() {
-    _usernameController.dispose();
-    _websiteController.dispose();
-    super.dispose();
-  }
+  String? _imageUrl;
 
   @override
   void initState() {
-    _getInitialProfile();
     super.initState();
+    _getInitialProfile();
   }
 
   Future<void> _getInitialProfile() async {
@@ -38,59 +29,41 @@ class _AccountPageState extends State<AccountPage> {
     setState(() {
       _usernameController.text = data['username'];
       _websiteController.text = data['website'];
+      _imageUrl = data['avatar_url'];
     });
   }
 
-  File? _image;
-
-  Future selectImage() async {
-    try {
-      final pickedFile = await ImagePicker.platform
-          .getImageFromSource(source: ImageSource.gallery);
-
-      setState(() {
-        if (pickedFile != null) {
-          _image = File(pickedFile.path);
-        } else {
-          print('no image has been selected');
-        }
-      });
-    } catch (e) {
-      print(e.toString());
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(
-          // 'Some error occurred please try again',
-          e.toString())));
-    }
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _websiteController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Accounts')),
+      backgroundColor: backgroundColor,
+      appBar: AppBar(
+          backgroundColor: backgroundColor, title: const Text('Accounts')),
       body: Padding(
         padding: const EdgeInsets.all(12.0),
-        child: Column(
+        child: ListView(
+          padding: const EdgeInsets.all(12),
           children: [
-            SizedBox(
-              height: 120,
-              width: 120,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(60),
-                child: profileWidget(image: _image),
-              ),
-            ),
-            const SizedBox(height: 15),
-            Center(
-              child: GestureDetector(
-                onTap: selectImage,
-                child: const Text(
-                  'Upload Profile Photo',
-                  style: TextStyle(
-                      color: Colors.blue,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w400),
-                ),
-              ),
+            Avatar(
+                imageUrl: _imageUrl,
+                onUpload: (imageUrl) async {
+                  setState(() {
+                    _imageUrl = imageUrl;
+                  });
+                  final userId = supabase.auth.currentUser!.id;
+                  await supabase
+                      .from('profiles')
+                      .update({'avatar_url': imageUrl}).eq('id', userId);
+                }),
+            const SizedBox(
+              height: 15,
             ),
             const SizedBox(height: 15),
             TextFormField(
@@ -127,15 +100,5 @@ class _AccountPageState extends State<AccountPage> {
         ),
       ),
     );
-  }
-
-  Future<String> uploadImageToStorage(
-      File? file, bool isPost, String childName) async {
-    // final uploadTask = ref.putFile(file!);
-
-    final imageUrl =
-        (await uploadTask.whenComplete(() => {})).ref.getDownloadURL();
-
-    return await imageUrl;
   }
 }

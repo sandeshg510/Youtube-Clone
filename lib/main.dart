@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:youtube_clone/presentation/account_page.dart';
+import 'package:youtube_clone/presentation/pages/profile/account_page.dart';
 import 'package:youtube_clone/presentation/pages/credential/login_page.dart';
+import 'package:youtube_clone/presentation/pages/home/home_page.dart';
 import 'package:youtube_clone/presentation/pages/splash_page.dart';
+import 'package:youtube_clone/presentation/pages/upload_page/upload_page.dart';
 
 void main() async {
   await Supabase.initialize(
@@ -23,15 +25,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Youtube Clone',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.red),
-        useMaterial3: true,
-      ),
       initialRoute: '/',
       routes: {
         '/': (context) => const SplashPage(),
         '/login': (context) => const LoginPage(),
         '/account': (context) => const AccountPage(),
+        '/homepage': (context) => const HomePage(),
+        '/upload': (context) => const UploadPage(),
       },
     );
   }

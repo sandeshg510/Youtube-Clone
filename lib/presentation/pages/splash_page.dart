@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:youtube_clone/main.dart';
+
+import '../../const.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -24,7 +25,7 @@ class _SplashPageState extends State<SplashPage> {
       return;
     }
     if (session != null) {
-      Navigator.of(context).pushReplacementNamed('/account');
+      Navigator.of(context).pushReplacementNamed('/homepage');
     } else {
       Navigator.of(context).pushReplacementNamed('/login');
     }
@@ -32,6 +33,12 @@ class _SplashPageState extends State<SplashPage> {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      backgroundColor: backgroundColor,
+      body: Center(
+        child: SizedBox(
+            height: 100, width: 100, child: Image.asset('assets/yt_logo.png')),
+      ),
+    );
   }
 }

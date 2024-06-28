@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:youtube_clone/main.dart';
 
+import '../../../const.dart';
+
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -35,7 +37,9 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: backgroundColor,
       appBar: AppBar(
+        backgroundColor: backgroundColor,
         title: const Text('Login'),
       ),
       body: ListView(
